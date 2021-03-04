@@ -2,8 +2,12 @@ package ro.sdacademy.javaremote12.doctor;
 
 import ro.sdacademy.javaremote12.consult.ConsultEntity;
 
+import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
 import javax.persistence.*;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Entity
 @Table(name = "doctors")
@@ -17,7 +21,7 @@ public class DoctorEntity {
     private String firstName;
     private String lastName;
     private String address;
-    @Enumerated (EnumType.STRING)
+    @Enumerated(EnumType.STRING)
     private DoctorSpecialityEnum speciality;
     private String email;
     private String phone;
@@ -82,7 +86,29 @@ public class DoctorEntity {
     }
 
     public void setEmail(String email) {
-        this.email = email;
+        if (this.checkEmailByRegex(email)) {
+            this.email = email;
+        } else {
+            System.out.println("Email Data is incorrect");
+        }
+
+    }
+    public Boolean checkEmail(String emailAddress) {
+        Boolean result;
+        try {
+            InternetAddress email = new InternetAddress(emailAddress);
+            email.validate();
+            result = true;
+        } catch (AddressException e) {
+            result = false;
+        }
+        return result;
+    }
+    public Boolean checkEmailByRegex(String emailAddress) {
+        final String regex = "([a-zA-Z0-9_.-]*)@([a-zA-Z_.-]*)((\\.([a-zA-Z]*){2,3})+)";
+        final Pattern pattern = Pattern.compile(regex);
+        Matcher matcher =pattern.matcher(emailAddress);
+        return matcher.matches();
     }
 
     public String getPhone() {
