@@ -3,10 +3,8 @@ package ro.sdacademy.javaremote12;
 import ro.sdacademy.javaremote12.consult.ConsultEntity;
 import ro.sdacademy.javaremote12.consult.ConsultRepository;
 import ro.sdacademy.javaremote12.consult.ConsultRepositoryImplementation;
-import ro.sdacademy.javaremote12.doctor.DoctorEntity;
-import ro.sdacademy.javaremote12.doctor.DoctorRepository;
-import ro.sdacademy.javaremote12.doctor.DoctorRepositoryImplementation;
-import ro.sdacademy.javaremote12.doctor.DoctorSpecialityEnum;
+import ro.sdacademy.javaremote12.doctor.*;
+import ro.sdacademy.javaremote12.generics.RepositoryImplementation;
 import ro.sdacademy.javaremote12.patient.PatientEntity;
 import ro.sdacademy.javaremote12.patient.PatientRepository;
 import ro.sdacademy.javaremote12.patient.PatientRepositoryImplementation;
@@ -18,11 +16,13 @@ public class Application {
     DoctorRepository doctorImplementation;
     PatientRepository patientImplementation;
     ConsultRepository consultImplementation;
+    RepositoryImplementation repositoryImplementation;
 
     void startMenu() {
         doctorImplementation = new DoctorRepositoryImplementation();
         patientImplementation = new PatientRepositoryImplementation();
         consultImplementation = new ConsultRepositoryImplementation();
+        repositoryImplementation = new RepositoryImplementation();
 
         Scanner scanner = new Scanner(System.in);
         while (true) {
@@ -64,7 +64,7 @@ public class Application {
                                 doctor.setEmail(scanner.nextLine());
                                 System.out.println("Insert phone number:");
                                 doctor.setPhone(scanner.nextLine());
-                                doctorImplementation.createDoctor(doctor);
+                                repositoryImplementation.createObject(doctor);
                                 break;
                             }
                             case 12: {
@@ -74,7 +74,8 @@ public class Application {
                                     System.out.println();
                                     System.out.println("Input the ID of the doctor you want to update:");
                                     Integer id = scanner.nextInt();
-                                    DoctorEntity doctor = doctorImplementation.getDoctorById(id);
+                                    String databaseById = "from DoctorEntity where id=:idNo";
+                                    DoctorEntity doctor = (DoctorEntity) repositoryImplementation.getObjectById(DoctorEntity.class,id,databaseById);
                                     System.out.println("Insert First Name:");
                                     scanner.nextLine();
                                     doctor.setFirstName(scanner.nextLine());
@@ -88,7 +89,7 @@ public class Application {
                                     doctor.setEmail(scanner.nextLine());
                                     System.out.println("Insert phone number:");
                                     doctor.setPhone(scanner.nextLine());
-                                    doctorImplementation.updateDoctor(doctor);
+                                    repositoryImplementation.updateObject(doctor);
 
                                 } catch (Exception e) {
                                     System.out.println(e.getMessage());
@@ -96,17 +97,20 @@ public class Application {
                                 break;
                             }
                             case 13: {
-                                doctorImplementation.getAllDoctors().stream().forEach(System.out::println);
+                                String database = "from DoctorEntity";
+                                repositoryImplementation.getAllObjects(database,DoctorEntity.class).stream().forEach(System.out::println);
                                 break;
                             }
                             case 14: {
                                 try {
                                     System.out.println("This the list of doctors:");
-                                    doctorImplementation.getAllDoctors().stream().forEach(System.out::println);
+                                    String database = "from DoctorEntity";
+                                    repositoryImplementation.getAllObjects(database,DoctorEntity.class).stream().forEach(System.out::println);
                                     System.out.println();
                                     System.out.println("Input the ID of the doctor you want to print:");
                                     Integer id = scanner.nextInt();
-                                    DoctorEntity doctor = doctorImplementation.getDoctorById(id);
+                                    String databaseById = "from DoctorEntity where id=:idNo";
+                                    DoctorEntity doctor = (DoctorEntity) repositoryImplementation.getObjectById(DoctorEntity.class,id,databaseById);
                                     System.out.println(doctor.toString());
                                 } catch (Exception e) {
                                     System.out.println(e.getMessage());
@@ -116,17 +120,19 @@ public class Application {
                             case 15: {
                                 try {
                                     System.out.println("This the list of doctors:");
-                                    doctorImplementation.getAllDoctors().stream().forEach(System.out::println);
+                                    String database = "from DoctorEntity";
+                                    repositoryImplementation.getAllObjects(database,DoctorEntity.class).stream().forEach(System.out::println);
                                     System.out.println();
                                     System.out.println("Input the ID of the doctor you want to delete:");
                                     Integer id = scanner.nextInt();
-                                    DoctorEntity doctor = doctorImplementation.getDoctorById(id);
+                                    String databaseById = "from DoctorEntity where id=:idNo";
+                                    DoctorEntity doctor = (DoctorEntity) repositoryImplementation.getObjectById(DoctorEntity.class,id,databaseById);
                                     System.out.println(doctor.toString());
-                                    System.out.println("Are you sure you want to delete? Input yes or no");
+                                    System.out.println("Are you sure you want to delete this Doctor? Input yes or no");
                                     scanner.nextLine();
                                     String answer = scanner.nextLine();
                                     if (answer.equals("yes")) {
-                                        doctorImplementation.deleteDoctor(id);
+                                        repositoryImplementation.deleteObject(doctor);
                                         System.out.println("Doctor " + doctor.getLastName() + " was successful deleted");
                                     }
                                 } catch (Exception e) {
