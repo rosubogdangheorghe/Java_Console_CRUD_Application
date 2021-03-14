@@ -1,27 +1,16 @@
 package ro.sdacademy.javaremote12;
 
-import ro.sdacademy.javaremote12.consult.ConsultEntity;
-import ro.sdacademy.javaremote12.consult.ConsultRepository;
-import ro.sdacademy.javaremote12.consult.ConsultRepositoryImplementation;
-import ro.sdacademy.javaremote12.doctor.*;
 import ro.sdacademy.javaremote12.generics.RepositoryImplementation;
-import ro.sdacademy.javaremote12.patient.PatientEntity;
-import ro.sdacademy.javaremote12.patient.PatientRepository;
-import ro.sdacademy.javaremote12.patient.PatientRepositoryImplementation;
-
-import java.time.LocalDate;
 import java.util.Scanner;
 
+import static ro.sdacademy.javaremote12.menu.DoctorMenu.*;
+import static ro.sdacademy.javaremote12.menu.PatientMenu.*;
+import static ro.sdacademy.javaremote12.menu.ConsultMenu.*;
+
 public class Application {
-    DoctorRepository doctorImplementation;
-    PatientRepository patientImplementation;
-    ConsultRepository consultImplementation;
     RepositoryImplementation repositoryImplementation;
 
     void startMenu() {
-        doctorImplementation = new DoctorRepositoryImplementation();
-        patientImplementation = new PatientRepositoryImplementation();
-        consultImplementation = new ConsultRepositoryImplementation();
         repositoryImplementation = new RepositoryImplementation();
 
         Scanner scanner = new Scanner(System.in);
@@ -46,50 +35,12 @@ public class Application {
 
                         switch (doctorOption) {
                             case 11: {
-                                System.out.println("Start to Create Doctor");
-                                DoctorEntity doctor = new DoctorEntity();
-
-                                System.out.println("Insert First Name:");
-                                scanner.nextLine();
-                                doctor.setFirstName(scanner.nextLine());
-
-                                System.out.println("Insert Last Name:");
-                                doctor.setLastName(scanner.nextLine());
-
-                                System.out.println("Insert address:");
-                                doctor.setAddress(scanner.nextLine());
-                                System.out.println("Insert doctor speciality:");
-                                doctor.setSpeciality(DoctorSpecialityEnum.valueOf(scanner.nextLine()));
-                                System.out.println("Insert email:");
-                                doctor.setEmail(scanner.nextLine());
-                                System.out.println("Insert phone number:");
-                                doctor.setPhone(scanner.nextLine());
-                                repositoryImplementation.createObject(doctor);
+                                doctorCreationMenu(scanner);
                                 break;
                             }
                             case 12: {
                                 try {
-                                    System.out.println("This the list of doctors:");
-                                    doctorImplementation.getAllDoctors().stream().forEach(System.out::println);
-                                    System.out.println();
-                                    System.out.println("Input the ID of the doctor you want to update:");
-                                    Integer id = scanner.nextInt();
-                                    String databaseById = "from DoctorEntity where id=:idNo";
-                                    DoctorEntity doctor = (DoctorEntity) repositoryImplementation.getObjectById(DoctorEntity.class,id,databaseById);
-                                    System.out.println("Insert First Name:");
-                                    scanner.nextLine();
-                                    doctor.setFirstName(scanner.nextLine());
-                                    System.out.println("Insert Last Name:");
-                                    doctor.setLastName(scanner.nextLine());
-                                    System.out.println("Insert address:");
-                                    doctor.setAddress(scanner.nextLine());
-                                    System.out.println("Insert doctor speciality:");
-                                    doctor.setSpeciality(DoctorSpecialityEnum.valueOf(scanner.nextLine()));
-                                    System.out.println("Insert email:");
-                                    doctor.setEmail(scanner.nextLine());
-                                    System.out.println("Insert phone number:");
-                                    doctor.setPhone(scanner.nextLine());
-                                    repositoryImplementation.updateObject(doctor);
+                                    doctorUpdateMenu(scanner);
 
                                 } catch (Exception e) {
                                     System.out.println(e.getMessage());
@@ -97,21 +48,12 @@ public class Application {
                                 break;
                             }
                             case 13: {
-                                String database = "from DoctorEntity";
-                                repositoryImplementation.getAllObjects(database,DoctorEntity.class).stream().forEach(System.out::println);
+                                printDoctorsListMenu();
                                 break;
                             }
                             case 14: {
                                 try {
-                                    System.out.println("This the list of doctors:");
-                                    String database = "from DoctorEntity";
-                                    repositoryImplementation.getAllObjects(database,DoctorEntity.class).stream().forEach(System.out::println);
-                                    System.out.println();
-                                    System.out.println("Input the ID of the doctor you want to print:");
-                                    Integer id = scanner.nextInt();
-                                    String databaseById = "from DoctorEntity where id=:idNo";
-                                    DoctorEntity doctor = (DoctorEntity) repositoryImplementation.getObjectById(DoctorEntity.class,id,databaseById);
-                                    System.out.println(doctor.toString());
+                                    printOneDoctorMenu(scanner);
                                 } catch (Exception e) {
                                     System.out.println(e.getMessage());
                                 }
@@ -119,22 +61,7 @@ public class Application {
                             }
                             case 15: {
                                 try {
-                                    System.out.println("This the list of doctors:");
-                                    String database = "from DoctorEntity";
-                                    repositoryImplementation.getAllObjects(database,DoctorEntity.class).stream().forEach(System.out::println);
-                                    System.out.println();
-                                    System.out.println("Input the ID of the doctor you want to delete:");
-                                    Integer id = scanner.nextInt();
-                                    String databaseById = "from DoctorEntity where id=:idNo";
-                                    DoctorEntity doctor = (DoctorEntity) repositoryImplementation.getObjectById(DoctorEntity.class,id,databaseById);
-                                    System.out.println(doctor.toString());
-                                    System.out.println("Are you sure you want to delete this Doctor? Input yes or no");
-                                    scanner.nextLine();
-                                    String answer = scanner.nextLine();
-                                    if (answer.equals("yes")) {
-                                        repositoryImplementation.deleteObject(doctor);
-                                        System.out.println("Doctor " + doctor.getLastName() + " was successful deleted");
-                                    }
+                                    deleteDoctorMenu(scanner);
                                 } catch (Exception e) {
                                     System.out.println(e.getMessage());
                                 }
@@ -156,81 +83,25 @@ public class Application {
                         int patientOption = scanner.nextInt();
                         switch (patientOption) {
                             case 21: {
-                                System.out.println("Start to create a patient");
-                                PatientEntity patient = new PatientEntity();
-                                System.out.println("Insert First Name:");
-                                scanner.nextLine();
-                                patient.setFirstName(scanner.nextLine());
-
-                                System.out.println("Insert Last Name:");
-                                patient.setLastName(scanner.nextLine());
-
-                                System.out.println("Insert cnp:");
-                                patient.setCnp(scanner.nextLine());
-
-                                System.out.println("Insert birthday year:");
-                                int year = scanner.nextInt();
-                                System.out.println("Insert birthday month:");
-                                int month = scanner.nextInt();
-                                System.out.println("Insert birthday day:");
-                                int day = scanner.nextInt();
-                                patient.setBirthday(LocalDate.of(year, month, day));
-                                patient.setAge();
-                                System.out.println("Insert phone number");
-                                scanner.nextLine();
-                                patient.setPhone(scanner.nextLine());
-                                patientImplementation.createPatient(patient);
+                                patientCreationMenu(scanner);
 
                                 break;
                             }
                             case 22: {
                                 try {
-                                    System.out.println("This the list of patients:");
-                                    patientImplementation.getAllPatients().stream().forEach(System.out::println);
-                                    System.out.println();
-                                    System.out.println("Input the ID of the patient you want to update:");
-                                    Integer id = scanner.nextInt();
-                                    PatientEntity patient = patientImplementation.getPatientById(id);
-                                    System.out.println("Insert First Name:");
-                                    scanner.nextLine();
-                                    patient.setFirstName(scanner.nextLine());
-
-                                    System.out.println("Insert Last Name:");
-                                    patient.setLastName(scanner.nextLine());
-
-                                    System.out.println("Insert cnp:");
-                                    patient.setCnp(scanner.nextLine());
-
-                                    System.out.println("Insert birthday year:");
-                                    int year = scanner.nextInt();
-                                    System.out.println("Insert birthday month:");
-                                    int month = scanner.nextInt();
-                                    System.out.println("Insert birthday day:");
-                                    int day = scanner.nextInt();
-                                    patient.setBirthday(LocalDate.of(year, month, day));
-                                    patient.setAge();
-                                    System.out.println("Insert phone number");
-                                    scanner.nextLine();
-                                    patient.setPhone(scanner.nextLine());
-                                    patientImplementation.updatePatient(patient);
+                                    patientUpdateMenu(scanner);
                                 } catch (Exception e) {
                                     System.out.println(e.getMessage());
                                 }
                                 break;
                             }
                             case 23: {
-                                patientImplementation.getAllPatients().stream().forEach(System.out::println);
+                                printPatientsListMenu();
                                 break;
                             }
                             case 24: {
                                 try {
-                                    System.out.println("This the list of patients:");
-                                    patientImplementation.getAllPatients().stream().forEach(System.out::println);
-                                    System.out.println();
-                                    System.out.println("Input the ID of the patient you want to print:");
-                                    Integer id = scanner.nextInt();
-                                    PatientEntity patient = patientImplementation.getPatientById(id);
-                                    System.out.println(patient.toString());
+                                    printOnePatientMenu(scanner);
                                 } catch (Exception e) {
                                     System.out.println(e.getMessage());
                                 }
@@ -239,19 +110,7 @@ public class Application {
                             }
                             case 25: {
                                 try {
-                                    System.out.println("This the list of patients:");
-                                    patientImplementation.getAllPatients().stream().forEach(System.out::println);
-                                    System.out.println("Input the ID of the patient you want to delete:");
-                                    Integer id = scanner.nextInt();
-                                    PatientEntity patient = patientImplementation.getPatientById(id);
-                                    System.out.println(patient.toString());
-                                    System.out.println("Are you sure you want to delete? Input yes or no");
-                                    scanner.nextLine();
-                                    String answer = scanner.nextLine();
-                                    if (answer.equals("yes")) {
-                                        patientImplementation.deletePatient(id);
-                                        System.out.println("patient " + patient.getLastName() + " was successful deleted");
-                                    }
+                                    deletePatientMenu(scanner);
                                 } catch (Exception e) {
                                     System.out.println(e.getMessage());
                                 }
@@ -275,85 +134,28 @@ public class Application {
 
                         switch (consultOption) {
                             case 31: {
-                                System.out.println("Start to create a consult");
-                                ConsultEntity consult = new ConsultEntity();
-                                System.out.println("Input date of the consult");
-                                System.out.println("year:");
-                                int year = scanner.nextInt();
-                                System.out.println("month:");
-                                int month = scanner.nextInt();
-                                System.out.println("day:");
-                                int day = scanner.nextInt();
-                                consult.setDate(LocalDate.of(year, month, day));
-                                System.out.println("Insert the patient id:");
-                                try {
-                                    PatientEntity patient = patientImplementation.getPatientById(scanner.nextInt());
-                                    consult.setPatient(patient);
-                                } catch (Exception e) {
-                                    System.out.println(e.getMessage());
-                                }
-                                System.out.println("Insert doctor id:");
-                                try {
-                                    DoctorEntity doctor = doctorImplementation.getDoctorById(scanner.nextInt());
-                                    consult.setDoctor(doctor);
-                                } catch (Exception e) {
-                                    System.out.println(e.getMessage());
-                                }
-                                consultImplementation.createConsult(consult);
+                                createConsultMenu(scanner);
                                 break;
                             }
                             case 32: {
-                                System.out.println("This the list of consults:");
-                                consultImplementation.getAllConsults().stream().forEach(System.out::println);
-                                System.out.println("Input the ID of the consult you want to update:");
-                                Integer id = scanner.nextInt();
                                 try {
-                                    System.out.println("Input the price of the consult:");
-                                    Double price = scanner.nextDouble();
-                                    System.out.println("Input diagnostic");
-                                    scanner.nextLine();
-                                    String diagnostic = scanner.nextLine();
-                                    consultImplementation.updateConsult(id, price, diagnostic);
+                                    updateConsultMenu(scanner);
                                 } catch (Exception e) {
                                     System.out.println(e.getMessage());
                                 }
+
                                 break;
                             }
                             case 33: {
-                                consultImplementation.getAllConsults().stream().forEach(System.out::println);
+                                printConsultsListMenu();
                                 break;
                             }
                             case 34: {
-                                System.out.println("This the list of consults:");
-                                consultImplementation.getAllConsults().stream().forEach(System.out::println);
-                                System.out.println("Input the ID of the consult you want to print:");
-                                Integer id = scanner.nextInt();
-                                try {
-                                    ConsultEntity consult = consultImplementation.getConsultById(id);
-                                    System.out.println(consult.toString());
-                                } catch (Exception e) {
-                                    System.out.println(e.getMessage());
-                                }
+                                printOneConsultMenu(scanner);
                                 break;
                             }
                             case 35: {
-                                System.out.println("This the list of consults:");
-                                consultImplementation.getAllConsults().stream().forEach(System.out::println);
-                                System.out.println("Input the ID of the consult you want to delete:");
-                                Integer id = scanner.nextInt();
-                                try {
-                                    ConsultEntity consult = consultImplementation.getConsultById(id);
-                                    System.out.println(consult.toString());
-                                    System.out.println("Are you sure you want to delete this consult? Input yes or no");
-                                    scanner.nextLine();
-                                    String answer = scanner.nextLine();
-                                    if (answer.equals("yes")) {
-                                        consultImplementation.deleteConsult(id);
-                                        System.out.println("Consult with id: " + id + " was successful deleted");
-                                    }
-                                } catch (Exception e) {
-                                    System.out.println(e.getMessage());
-                                }
+                                deleteConsultMenu(scanner);
                                 break;
                             }
                             default:
@@ -368,5 +170,5 @@ public class Application {
                 }
             }
         }
-    }
+}
 
