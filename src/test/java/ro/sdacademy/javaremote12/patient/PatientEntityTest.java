@@ -32,10 +32,18 @@ public class PatientEntityTest {
         assertEquals(47,result);
     }
     @Test
-    public void checkCnp() {
+    public void checkCnpRegexLength() {
         PatientEntity patient = new PatientEntity();
         String testString = "1741011020035";
-        boolean isValid = patient.checkCnp(testString);
+        Boolean isValid = patient.checkCnpRegexLength(testString);
+        assertTrue(isValid);
+    }
+
+    @Test
+    public void checkCnpAlgorithm(){
+        PatientEntity patient = new PatientEntity();
+        String testString = "1741011020038";
+        Boolean isValid = patient.checkCnpAlgorithm(testString);
         assertTrue(isValid);
     }
 }

@@ -72,18 +72,57 @@ public class PatientEntity {
 
     public void setCnp(String cnp) {
 
-        if(this.checkCnp(cnp)) {
+        if(this.checkCnpRegexLength(cnp) && this.checkCnpAlgorithm(cnp)) {
             this.cnp = cnp;
         }
           else {
             System.out.println("data is incorrect");
         }
     }
-    public boolean checkCnp(String string) {
+    public Boolean checkCnpRegexLength(String string) {
         final String regex ="[0-9]*";
         final Pattern pattern = Pattern.compile(regex);
         Matcher matcher =pattern.matcher(string);
         return matcher.matches() && string.length() == 13;
+    }
+    public Boolean checkCnpAlgorithm (String string) {
+        int [] cnp = new int [13];
+        String[] stringArray = string.split("");
+        for(int i = 0; i<13;i++) {
+            cnp[i] = Integer.parseInt(stringArray[i]);
+        }
+
+        final Integer[] testKeyArray = new Integer[]{2,7,9,1,4,6,3,5,8,2,7,9};
+         int testSum = 0;
+        for(int i=0;i<12;i++) {
+            testSum += cnp[i]*testKeyArray[i];
+        }
+        testSum = testSum%11;
+        if(testSum == 10) {
+            testSum = 1;
+        }
+        Integer year = cnp[1]*10+cnp[2];
+        switch (cnp[0]) {
+            case 1 :
+            case 2 : {
+                year +=1900;
+                break;
+            }
+            case 3:
+            case 4: {
+                year += 1800;
+                break;
+            }
+            case 5:
+            case 6: {
+                year += 2000;
+                break;
+            }
+            default: {
+                return false;
+            }
+        }
+        return (cnp[12] == testSum && year >1800 && year <2099);
     }
 
     public Integer getAge() {
